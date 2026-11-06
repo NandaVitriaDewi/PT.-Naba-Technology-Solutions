@@ -17,13 +17,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class HeaderSettingResource extends Resource
 {
-    protected static ?string $model = HeaderSetting::class;
+        protected static ?string $model = HeaderSetting::class;
 
     protected static ?string $navigationLabel = 'Navbar';
     protected static ?string $modelLabel = 'Navbar';
     protected static ?string $pluralModelLabel = 'Navbar';
-    protected static ?int $navigationSort = 1;
-
+   
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+    protected static int|null $navigationSort = 1;
     
     // Isi navbar cuma satu, jadi tidak bisa dibuat baru atau dihapus
     public static function canCreate(): bool

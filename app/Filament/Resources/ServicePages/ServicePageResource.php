@@ -22,7 +22,8 @@ class ServicePageResource extends Resource
     protected static ?string $navigationLabel = 'Halaman Layanan';
     protected static ?string $modelLabel = 'Halaman Layanan';
     protected static ?string $pluralModelLabel = 'Halaman Layanan';
-    protected static ?int $navigationSort = 2;
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+    protected static int|null $navigationSort = 4;
 
     // Isi halaman cuma satu, jadi tidak bisa dibuat baru atau dihapus
     public static function canCreate(): bool

@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Service;
+use App\Models\ServicePage;
 
 class LayananController extends Controller
 {
-    // Halaman Utama Layanan (/layanan)
+    // Halaman daftar layanan (/layanan)
     public function index()
     {
-        $layanan = config('layanan');
-        return view('frontend.layanan.index', compact('layanan'));
+        return view('layanan', [
+            'page'     => ServicePage::current(),
+            'services' => Service::active()->get(),
+        ]);
     }
 
-    // Halaman Detail Layanan (/layanan/{slug})
-    public function show($slug)
+    // Halaman detail layanan (/layanan/{slug})
+    public function show(string $slug)
     {
-        $layanan = config("layanan.{$slug}");
-
-        if (!$layanan) {
-            abort(404);
-        }
-
-        return view('frontend.layanan.show', compact('layanan', 'slug'));
+        $layanan = Service::active()->where('slug', $slug)->firstOrFail();
+        return view('frontend.layanan.show', compact('layanan'));
     }
 }

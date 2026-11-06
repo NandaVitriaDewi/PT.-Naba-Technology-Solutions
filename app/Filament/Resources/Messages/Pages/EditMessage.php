@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Messages\Pages;
 
 use App\Filament\Resources\Messages\MessageResource;
+use App\Services\WhatsAppService; // <-- Import Service-nya
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
@@ -32,7 +33,6 @@ class EditMessage extends EditRecord
         return [];
     }
 
-    // Di pojok kanan atas cuma nyisa Hapus
     protected function getHeaderActions(): array
     {
         return [
@@ -47,13 +47,25 @@ class EditMessage extends EditRecord
     protected function getFormActions(): array
     {
         return [
-            // Tombol Balas Pesan (Warna Hijau)
+            // 1. Tombol Balas Pesan (Langsung ke WhatsApp)
             Action::make('balas_pesan')
                 ->label('Balas Pesan')
-                ->icon('heroicon-o-envelope')
+                ->icon('heroicon-o-chat-bubble-left-right') 
                 ->color('success')
-                ->url(fn () => 'mailto:' . $this->record->email . '?subject=Balasan dari PT. Naba Technology Solutions')
+                ->url(function () {
+                    // Panggil Service, kirim nomor telepon & pesan otomatisnya
+                    return WhatsAppService::generateLink(
+                        $this->record->phone,
+                        "Halo " . $this->record->name . ", terima kasih sudah menghubungi PT. Naba Technology Solutions. Ada yang bisa kami bantu?"
+                    );
+                })
                 ->openUrlInNewTab(),
+
+            // 2. Tombol Batal (Kembali ke Daftar)
+            Action::make('batal')
+                ->label('Batal')
+                ->color('gray')
+                ->url(MessageResource::getUrl('index')),
         ];
     }
 }

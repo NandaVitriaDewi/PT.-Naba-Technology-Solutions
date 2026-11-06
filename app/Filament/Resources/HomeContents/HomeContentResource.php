@@ -22,9 +22,9 @@ class HomeContentResource extends Resource
     protected static ?string $navigationLabel = 'Halaman Beranda';
     protected static ?string $modelLabel = 'Halaman Beranda';
     protected static ?string $pluralModelLabel = 'Halaman Beranda';
-    protected static ?int $navigationSort = 1;
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+    protected static int|null $navigationSort = 2;
 
-    // Isi beranda cuma satu, jadi tidak bisa dibuat baru atau dihapus
     public static function canCreate(): bool
     {
         return false;

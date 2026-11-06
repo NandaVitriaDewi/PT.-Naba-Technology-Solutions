@@ -7,7 +7,19 @@
         
         {{-- HEADER --}}
         <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+            
+            {{-- KIRI: JUDUL & CHECKBOX MASTER --}}
             <div style="display: flex; align-items: center; gap: 0.75rem;">
+                
+                {{-- CHECKBOX MASTER (PILIH SEMUA) --}}
+                <div style="display: flex; align-items: center; justify-content: center; margin-right: 0.25rem;">
+                    <input type="checkbox" 
+                        wire:model.live="selectAll" 
+                        wire:click="toggleSelectAll"
+                        title="Pilih Semua"
+                        style="width: 1.1rem; height: 1.1rem; border-radius: 0.25rem; border: 1px solid #cbd5e1; cursor: pointer; accent-color: #2563eb;">
+                </div>
+
                 <div style="border-radius: 0.5rem; background-color: #eff6ff; padding: 0.5rem; color: #2563eb; flex-shrink: 0;">
                     <x-filament::icon icon="heroicon-o-clock" style="width: 1.25rem; height: 1.25rem;" />
                 </div>
@@ -18,6 +30,7 @@
                 </div>
             </div>
 
+            {{-- KANAN: TOMBOL HAPUS & FILTER WAKTU --}}
             <div style="display: flex; align-items: center; gap: 0.5rem;">
                 {{-- TOMBOL HAPUS (Muncul kalau ada data yang dicentang) --}}
                 @if(count($selectedLogs) > 0)
@@ -49,9 +62,10 @@
                 
                 <div style="display: flex; align-items: flex-start; gap: 0.75rem; min-width: 0; flex: 1 1 18rem;">
                     
-                    {{-- CHECKBOX SELECT --}}
+                    {{-- CHECKBOX PER BARIS --}}
                     <div style="display: flex; align-items: center; height: 2rem;">
                         <input type="checkbox" wire:model.live="selectedLogs" value="{{ $row['id'] }}" 
+                            wire:change="checkSelectAllStatus" {{-- TAMBAHAN BIAR SINKRON --}}
                             style="width: 1rem; height: 1rem; border-radius: 0.25rem; border: 1px solid #cbd5e1; cursor: pointer; accent-color: #2563eb;">
                     </div>
 

@@ -48,8 +48,10 @@ class MessagesTable
 
                 TextColumn::make('created_at')
                     ->label('Diterima')
+                    ->timezone('Asia/Makassar')
                     ->formatStateUsing(fn ($state): string => $state ? $state->translatedFormat('d M Y, H:i') : '-')
                     ->sortable(),
+                    
             ])
             ->defaultSort('created_at', 'desc')
             ->paginated([10, 25, 50])

@@ -22,7 +22,8 @@ class ContactPageResource extends Resource
     protected static ?string $navigationLabel = 'Halaman Kontak';
     protected static ?string $modelLabel = 'Halaman Kontak';
     protected static ?string $pluralModelLabel = 'Halaman Kontak';
-    protected static ?int $navigationSort = 6;
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+    protected static int|null $navigationSort = 6;
 
     // Isi halaman cuma satu, jadi tidak bisa dibuat baru atau dihapus
     public static function canCreate(): bool

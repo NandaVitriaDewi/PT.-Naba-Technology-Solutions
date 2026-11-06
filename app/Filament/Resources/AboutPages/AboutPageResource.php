@@ -22,7 +22,8 @@ class AboutPageResource extends Resource
     protected static ?string $navigationLabel = 'Halaman Tentang Kami';
     protected static ?string $modelLabel = 'Halaman Tentang Kami';
     protected static ?string $pluralModelLabel = 'Halaman Tentang Kami';
-    protected static ?int $navigationSort = 2;
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+    protected static int|null $navigationSort = 3;
 
     // Isi halaman cuma satu, jadi tidak bisa dibuat baru atau dihapus
     public static function canCreate(): bool

@@ -2,10 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\ActivityLogService; // <-- Import Service
 use Filament\Widgets\Widget;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Filament\Notifications\Notification;
@@ -17,15 +16,15 @@ class RecentActivityWidget extends Widget
 
     public string $period = '30';
     public int $limit = 10;
-
-    // Properti buat nampung ID yang dicentang
     public array $selectedLogs = [];
+    public bool $selectAll = false;
 
     public function setPeriod(string $period): void
     {
         $this->period = in_array($period, ['7', '30', 'all'], true) ? $period : '30';
         $this->limit = 10;
-        $this->selectedLogs = []; // Reset pilihan pas ganti filter
+        $this->selectedLogs = [];
+        $this->selectAll = false;
     }
 
     public function loadMore(): void 
@@ -33,57 +32,55 @@ class RecentActivityWidget extends Widget
         $this->limit += 10; 
     }
 
-    // Fungsi buat ngehapus data yang dicentang
     public function deleteSelected(): void
     {
-        if (empty($this->selectedLogs)) {
-            return;
-        }
+        if (empty($this->selectedLogs)) return;
 
         $count = count($this->selectedLogs);
-        ActivityLog::whereIn('id', $this->selectedLogs)->delete();
+        
+        // Panggil Service buat ngehapus
+        ActivityLogService::deleteLogs($this->selectedLogs);
         
         $this->selectedLogs = [];
+        $this->selectAll = false;
 
         Notification::make()
             ->title("{$count} riwayat berhasil dihapus")
             ->success()
             ->send();
 
-        // INI DIA KUNCI RAHASIANYA BRO: Memaksa Livewire nge-refresh tampilan
         $this->dispatch('$refresh');
     }
 
-    protected function baseQuery(): Builder
+    public function toggleSelectAll(): void
     {
-        $q = ActivityLog::query();
-        if ($this->period !== 'all') {
-            $q->where('created_at', '>=', now()->subDays((int) $this->period));
+        if ($this->selectAll) {
+            $this->selectedLogs = collect($this->rows)->pluck('id')->toArray();
+        } else {
+            $this->selectedLogs = [];
         }
-        return $q;
     }
+
+    public function checkSelectAllStatus(): void
+    {
+        $this->selectAll = count($this->selectedLogs) === count($this->rows);
+    }
+
+    // --- TAMPILAN DATA (Manggil Service) ---
 
     public function getTotalLogsProperty(): int
     {
-        return $this->baseQuery()->count();
+        // Panggil Service buat ngitung total
+        return ActivityLogService::countLogs($this->period);
     }
 
     public function getRowsProperty(): array
     {
-        $logs = $this->baseQuery()
-            ->latest()->latest('id')
-            ->limit($this->limit)
-            ->get()
-            ->unique(fn (ActivityLog $log) => implode('|', [
-                $log->subject,
-                $log->description,
-                $log->created_at?->format('Y-m-d H:i:s'),
-            ]))
-            ->values();
-
+        // Panggil Service buat narik data
+        $logs = ActivityLogService::getLogs($this->period, $this->limit);
         $users = $this->usersFor($logs);
 
-        return $logs->map(fn (ActivityLog $log) => [
+        return $logs->map(fn ($log) => [
             'id'          => $log->id,
             'icon'        => $this->iconFor((string) $log->subject),
             'subject'     => $log->subject,
@@ -94,6 +91,8 @@ class RecentActivityWidget extends Widget
             'user'        => $users[$log->getAttribute('user_id')] ?? null,
         ])->all();
     }
+
+    // --- LOGIKA TAMPILAN (Warna & Ikon) ---
 
     protected function usersFor(Collection $logs): array
     {
@@ -118,7 +117,7 @@ class RecentActivityWidget extends Widget
         };
     }
 
-    protected function actionFor(ActivityLog $log): array
+    protected function actionFor($log): array
     {
         $text = Str::lower((string) $log->description);
         if (Str::startsWith($text, ['membuat', 'menambah', 'menambahkan'])) {

@@ -4,7 +4,7 @@
 
 {{-- Data dari admin (menu Halaman Kontak) --}}
 @php
-    $wa       = $setting->whatsapp ?: '628113383803';
+    $wa       = $setting->whatsapp ?: '082340153055';
     $mapsLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($setting->address ?: 'Denpasar, Bali');
     $mapSrc   = $page->map_embed_url ?: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.135430852033!2d115.2281!3d-8.6784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNDAnNDIuMiJTIDExNcKwMTMnNDEuMiJF!5e0!3m2!1sid!2sid!4v1620000000000!5m2!1sid!2sid';
 @endphp
@@ -46,7 +46,6 @@
 {{-- ================= KONTEN UTAMA KONTAK ================= --}}
 <section class="bg-white py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {{-- Grid Utama (5 Kolom Kiri, 7 Kolom Kanan) --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
@@ -65,7 +64,6 @@
 
                 {{-- Container Card Kontak --}}
                 <div class="flex flex-col gap-4">
-
                     {{-- 1. Card Alamat --}}
                     <div data-aos="fade-up" data-aos-delay="100" class="flex items-center gap-4 rounded-2xl bg-[#E8F1FF] p-4 sm:p-5">
                         <div class="flex h-10 w-10 shrink-0 items-center justify-center text-slate-900">
@@ -132,7 +130,6 @@
                             @endif
                         </div>
                     </div>
-
                 </div>
 
                 {{-- Embed Maps --}}
@@ -158,23 +155,25 @@
                             {{ $page->form_label }}
                         </span>
                     @endif
+
                     <h3 class="mt-1 text-2xl font-extrabold tracking-tight text-[#0B1528] sm:text-3xl">
                         {{ $page->form_title }}
                     </h3>
+
                     @if ($page->form_intro)
                         <p class="mt-2 text-xs sm:text-sm text-slate-500 leading-relaxed">
                             {{ $page->form_intro }}
                         </p>
                     @endif
 
-                    {{-- Pesan berhasil (muncul setelah form terkirim) --}}
+                    {{-- Pesan berhasil --}}
                     @if (session('sukses'))
                         <div class="mt-5 rounded-xl bg-green-100 px-4 py-3 text-xs sm:text-sm text-green-800">
                             {{ session('sukses') }}
                         </div>
                     @endif
 
-                    {{-- Pesan error (muncul kalau isian belum benar) --}}
+                    {{-- Pesan error --}}
                     @if ($errors->any())
                         <div class="mt-5 rounded-xl bg-red-100 px-4 py-3 text-xs sm:text-sm text-red-800">
                             <p class="font-bold">Mohon periksa kembali isian Anda:</p>
@@ -252,7 +251,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
@@ -267,9 +265,17 @@
             easing: 'ease-out-cubic'
         });
 
-        // Setelah form dikirim (berhasil atau ada error), gulir ke kotak formulir
-        @if (session('sukses') || $errors->any())
-            document.getElementById('formulir')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        @if (session('wa_link'))
+            let waLink = "{{ session('wa_link') }}";
+            
+            // Trik: Bikin tag <a> secara virtual, lalu "klik" otomatis
+            let a = document.createElement('a');
+            a.href = waLink;
+            a.target = '_blank'; // Buka di tab baru
+            a.rel = 'noopener noreferrer';
+            document.body.appendChild(a);
+            a.click(); // Klik otomatis
+            document.body.removeChild(a);
         @endif
     });
 </script>

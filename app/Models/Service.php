@@ -20,9 +20,18 @@ class Service extends Model
 
     protected static function booted(): void
     {
-        // Kalau slug kosong, buat otomatis dari judul
+        // Otomatis bikin slug unik sebelum data disimpan
         static::saving(function (Service $service) {
-            $service->slug = $service->slug ?: Str::slug($service->title);
+            if (empty($service->slug)) {
+                $base = Str::slug($service->title) ?: 'layanan';
+                $slug = $base;
+                $i = 2;
+                // Cek kalau slug udah ada di database, tambahin angka di belakangnya
+                while (static::where('slug', $slug)->where('id', '!=', $service->id)->exists()) {
+                    $slug = $base . '-' . $i++;
+                }
+                $service->slug = $slug;
+            }
         });
     }
 

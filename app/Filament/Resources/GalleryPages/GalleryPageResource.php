@@ -22,7 +22,8 @@ class GalleryPageResource extends Resource
     protected static ?string $navigationLabel = 'Halaman Galeri';
     protected static ?string $modelLabel = 'Halaman Galeri';
     protected static ?string $pluralModelLabel = 'Halaman Galeri';
-    protected static ?int $navigationSort = 5;
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+    protected static int|null $navigationSort = 5;
 
     // Isi halaman cuma satu, jadi tidak bisa dibuat baru atau dihapus
     public static function canCreate(): bool

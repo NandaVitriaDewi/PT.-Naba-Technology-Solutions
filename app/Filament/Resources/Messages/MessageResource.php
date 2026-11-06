@@ -21,7 +21,8 @@ class MessageResource extends Resource
     protected static ?string $navigationLabel = 'Pesan Masuk';
     protected static ?string $modelLabel = 'Pesan';
     protected static ?string $pluralModelLabel = 'Pesan Masuk';
-    protected static ?int $navigationSort = 7;
+    protected static string|\UnitEnum|null $navigationGroup = 'Data & Transaksi';
+    protected static int|null $navigationSort = 1;
 
     // Pesan datang dari form kontak, admin tidak membuatnya manual
     public static function canCreate(): bool
