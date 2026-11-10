@@ -49,7 +49,19 @@ class KontakController extends Controller
             'body'    => $data['pesan'],
         ]);
 
-        $waAdmin = '6282340153055'; 
+        // --- LOGIKA WA ---
+        $waAdmin = ContactPage::current()->whatsapp;
+
+        // Kalau nomor WA di CMS kosong, lewati logika WA
+        if (empty($waAdmin)) {
+            return back()->with('sukses', 'Terima kasih, pesan Anda sudah kami terima.');
+        }
+
+        // Pastiin format nomor jadi 62
+        $waAdmin = preg_replace('/[^0-9]/', '', $waAdmin);
+        if (str_starts_with($waAdmin, '0')) {
+            $waAdmin = '62' . substr($waAdmin, 1);
+        }
         
         $teksWA = "Halo Admin PT Naba, saya *{$data['nama']}* ingin bertanya.\n\n";
         $teksWA .= "Email: {$data['email']}\n";

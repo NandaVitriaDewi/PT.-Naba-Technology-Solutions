@@ -82,8 +82,10 @@ class ContactPageForm
 
                                 TextInput::make('whatsapp')
                                     ->label('Nomor WhatsApp (untuk tombol CHAT)')
-                                    ->helperText('Format 62 tanpa + dan tanpa spasi. Contoh: 628113383803')
+                                    ->placeholder('Contoh: 628113383803') 
+                                    ->helperText('Format 62 tanpa + dan tanpa spasi.')
                                     ->prefixIcon('heroicon-o-chat-bubble-left-right')
+                                    ->tel()
                                     ->maxLength(50),
 
                                 TextInput::make('email')

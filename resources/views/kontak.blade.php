@@ -4,8 +4,9 @@
 
 {{-- Data dari admin (menu Halaman Kontak) --}}
 @php
-    $wa       = $setting->whatsapp ?: '082340153055';
-    $mapsLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($setting->address ?: 'Denpasar, Bali');
+    // SEKARANG SEMUA AMBIL DARI $page (ContactPage), BUKAN $setting LAGI
+    $wa       = $page->whatsapp;
+    $mapsLink = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($page->address ?: 'Denpasar, Bali');
     $mapSrc   = $page->map_embed_url ?: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.135430852033!2d115.2281!3d-8.6784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNDAnNDIuMiJTIDExNcKwMTMnNDEuMiJF!5e0!3m2!1sid!2sid!4v1620000000000!5m2!1sid!2sid';
 @endphp
 
@@ -19,7 +20,6 @@
 <section class="bg-[#0B1528] py-16 lg:py-20 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl" data-aos="fade-up" data-aos-duration="900">
-            {{-- Badge Top --}}
             @if ($page->badge)
                 <div class="mb-4">
                     <span class="inline-block rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-white-400 border border-white/10">
@@ -28,12 +28,10 @@
                 </div>
             @endif
 
-            {{-- Judul --}}
             <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl leading-tight text-white">
                 {{ $page->title }}
             </h1>
 
-            {{-- Subtitle --}}
             @if ($page->intro)
                 <p class="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
                     {{ $page->intro }}
@@ -46,10 +44,9 @@
 {{-- ================= KONTEN UTAMA KONTAK ================= --}}
 <section class="bg-white py-12 lg:py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Grid Utama (5 Kolom Kiri, 7 Kolom Kanan) --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
-            {{-- ================= KOLOM KIRI: INFO KONTAK & MAPS ================= --}}
+            {{-- ================= KOLOM KIRI ================= --}}
             <div class="lg:col-span-5 flex flex-col gap-6" data-aos="fade-right" data-aos-duration="900">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
@@ -62,7 +59,6 @@
                     @endif
                 </div>
 
-                {{-- Container Card Kontak --}}
                 <div class="flex flex-col gap-4">
                     {{-- 1. Card Alamat --}}
                     <div data-aos="fade-up" data-aos-delay="100" class="flex items-center gap-4 rounded-2xl bg-[#E8F1FF] p-4 sm:p-5">
@@ -75,7 +71,7 @@
                         <div>
                             <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">ALAMAT KANTOR</span>
                             <p class="mt-0.5 text-xs sm:text-sm font-bold text-slate-900">
-                                {{ $setting->address }}
+                                {{ $page->address }}
                             </p>
                         </div>
                     </div>
@@ -90,12 +86,15 @@
                             </div>
                             <div>
                                 <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">TELEPON & WHATSAPP</span>
-                                <p class="mt-0.5 text-xs sm:text-sm font-bold text-slate-900">{{ $setting->phone }}</p>
+                                <p class="mt-0.5 text-xs sm:text-sm font-bold text-slate-900">{{ $page->phone }}</p>
                             </div>
                         </div>
-                        <a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener" class="rounded-xl bg-[#22C55E] px-4 py-2 text-xs font-bold text-white transition-all hover:bg-emerald-600 shadow-sm">
-                            CHAT
-                        </a>
+                        
+                        @if(!empty($wa))
+                            <a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener" class="rounded-xl bg-[#22C55E] px-4 py-2 text-xs font-bold text-white transition-all hover:bg-emerald-600 shadow-sm">
+                                CHAT
+                            </a>
+                        @endif
                     </div>
 
                     {{-- 3. Card Email --}}
@@ -108,7 +107,7 @@
                         <div>
                             <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">EMAIL</span>
                             <p class="mt-0.5 text-xs sm:text-sm font-bold text-slate-900">
-                                {{ $setting->email }}
+                                {{ $page->email }}
                             </p>
                         </div>
                     </div>
@@ -123,10 +122,10 @@
                         <div>
                             <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">JAM PELAYANAN</span>
                             <p class="mt-0.5 text-xs sm:text-sm font-bold text-slate-900">
-                                {{ $setting->hours }}
+                                {{ $page->hours }}
                             </p>
-                            @if ($setting->hours_note)
-                                <p class="text-[11px] text-slate-500">{{ $setting->hours_note }}</p>
+                            @if ($page->hours_note)
+                                <p class="text-[11px] text-slate-500">{{ $page->hours_note }}</p>
                             @endif
                         </div>
                     </div>
@@ -147,7 +146,7 @@
                 </div>
             </div>
 
-            {{-- ================= KOLOM KANAN: FORMULIR PENAWARAN (STICKY) ================= --}}
+            {{-- ================= KOLOM KANAN ================= --}}
             <div class="lg:col-span-7 lg:sticky lg:top-24" data-aos="fade-left" data-aos-duration="900" data-aos-delay="200">
                 <div id="formulir" class="rounded-3xl bg-[#F0F2F5] p-6 sm:p-8 lg:p-9 border border-slate-200/40">
                     @if ($page->form_label)
@@ -166,14 +165,12 @@
                         </p>
                     @endif
 
-                    {{-- Pesan berhasil --}}
                     @if (session('sukses'))
                         <div class="mt-5 rounded-xl bg-green-100 px-4 py-3 text-xs sm:text-sm text-green-800">
                             {{ session('sukses') }}
                         </div>
                     @endif
 
-                    {{-- Pesan error --}}
                     @if ($errors->any())
                         <div class="mt-5 rounded-xl bg-red-100 px-4 py-3 text-xs sm:text-sm text-red-800">
                             <p class="font-bold">Mohon periksa kembali isian Anda:</p>
@@ -188,7 +185,6 @@
                     <form action="/kontak" method="POST" class="mt-6 space-y-4">
                         @csrf
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {{-- Nama Lengkap --}}
                             <div>
                                 <label for="nama" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-800 mb-1.5">
                                     NAMA LENGKAP/INSTANSI
@@ -197,7 +193,6 @@
                                     class="w-full rounded-xl border-0 bg-white px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             </div>
 
-                            {{-- Email --}}
                             <div>
                                 <label for="email" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-800 mb-1.5">
                                     ALAMAT EMAIL
@@ -208,7 +203,6 @@
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {{-- Nomor Telepon --}}
                             <div>
                                 <label for="telepon" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-800 mb-1.5">
                                     NOMOR TELEPON/WHATSAPP
@@ -217,7 +211,6 @@
                                     class="w-full rounded-xl border-0 bg-white px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             </div>
 
-                            {{-- Sektor Kebutuhan --}}
                             <div>
                                 <label for="subjek" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-800 mb-1.5">
                                     SEKTOR / SUBJEK KEBUTUHAN
@@ -227,7 +220,6 @@
                             </div>
                         </div>
 
-                        {{-- Rincian Kebutuhan --}}
                         <div>
                             <label for="pesan" class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-800 mb-1.5">
                                 RINCIAN KEBUTUHAN & SPESIFIKASI
@@ -236,13 +228,11 @@
                                 class="w-full rounded-xl border-2 border-[#0070F3] bg-white px-3.5 py-2.5 text-xs text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('pesan') }}</textarea>
                         </div>
 
-                        {{-- Tombol Submit --}}
                         <button type="submit"
                             class="w-full rounded-xl bg-[#0B1528] py-3.5 text-center text-xs font-bold text-white shadow-sm transition-all hover:bg-slate-800">
                             {{ $page->form_button ?: 'Kirim' }}
                         </button>
 
-                        {{-- Disclaimer --}}
                         @if ($page->form_note)
                             <p class="mt-2 text-center text-[10px] text-slate-400">
                                 {{ $page->form_note }}
